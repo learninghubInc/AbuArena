@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Abu Arena: Stick Mayhem",
+    "slug": "abuarena",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "userInterfaceStyle": "dark",
+    "icon": "./app.png",
+    "android": {
+      "package": "com.learninghub.abuarena",
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0D11"
+      }
+    }
+  }
+}
