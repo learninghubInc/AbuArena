@@ -24,7 +24,6 @@ export default function App() {
     );
   }
 
-  // HTML5 Game Engine featuring Main Menu, Game Selection, and the Arena Floor
   const gameHTML = `
     <!DOCTYPE html>
     <html>
@@ -34,23 +33,31 @@ export default function App() {
         body { margin: 0; background: #0F0F13; overflow: hidden; font-family: 'Arial Black', sans-serif; user-select: none; color: white; }
         canvas { display: block; margin: 0 auto; background: #16161E; }
         
-        /* Menu System Overlay styles */
-        .menu-layer { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(15, 15, 19, 0.95); }
+        .menu-layer { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(15, 15, 19, 0.95); z-index: 100; }
         .menu-title { font-size: 38px; color: #FFCC33; text-shadow: 3px 3px #FF3366; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; }
         .menu-btn { background: linear-gradient(135deg, #00E676, #00B0FF); border: none; padding: 15px 40px; color: white; font-size: 20px; font-weight: bold; border-radius: 50px; margin: 10px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,230,118,0.4); text-transform: uppercase; }
-        .menu-btn:active { transform: scale(0.95); }
         
-        /* Game Selection Cards */
         .grid { display: flex; gap: 20px; }
         .card { background: #22222E; border: 3px solid #33CCFF; padding: 20px; border-radius: 15px; text-align: center; width: 140px; }
         
-        /* Game HUD Controllers */
-        .btn { position: absolute; width: 70px; height: 70px; border-radius: 50%; opacity: 0.7; color: white; font-weight: bold; font-size: 26px; display: none; align-items: center; justify-content: center; z-index: 10; }
-        #p1-up { bottom: 95px; left: 20px; background: #FF3366; } #p1-down { bottom: 15px; left: 20px; background: #FF3366; }
-        #p2-up { bottom: 95px; right: 20px; background: #33CCFF; } #p2-down { bottom: 15px; right: 20px; background: #33CCFF; }
-        #p3-up { top: 15px; left: 20px; background: #33FF66; transform: rotate(180deg); } #p3-down { top: 95px; left: 20px; background: #33FF66; transform: rotate(180deg); }
-        #p4-up { top: 15px; right: 20px; background: #FFCC33; transform: rotate(180deg); } #p4-down { top: 95px; right: 20px; background: #FFCC33; transform: rotate(180deg); }
-        #back-btn { position: absolute; top: 15px; left: calc(50% - 40px); background: #555; padding: 5px 15px; font-size: 12px; border-radius: 5px; display: none; z-index: 20; border: none; color: white; }
+        /* 🚨 CIRCULAR JOYSTICK HOUSINGS 🚨 */
+        .joystick-container { position: absolute; width: 90px; height: 90px; background: rgba(255, 255, 255, 0.1); border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; display: none; justify-content: center; align-items: center; z-index: 10; touch-action: none; }
+        .joystick-knob { width: 35px; height: 35px; border-radius: 50%; position: absolute; transition: transform 0.05s linear; }
+        
+        /* Position one circle controller in each corner */
+        #joy-p1 { bottom: 20px; left: 20px; border-color: #FF3366; }
+        #joy-p1 .joystick-knob { background: #FF3366; }
+        
+        #joy-p2 { bottom: 20px; right: 20px; border-color: #33CCFF; }
+        #joy-p2 .joystick-knob { background: #33CCFF; }
+        
+        #joy-p3 { top: 20px; left: 20px; border-color: #33FF66; }
+        #joy-p3 .joystick-knob { background: #33FF66; }
+        
+        #joy-p4 { top: 20px; right: 20px; border-color: #FFCC33; }
+        #joy-p4 .joystick-knob { background: #FFCC33; }
+
+        #back-btn { position: absolute; top: 15px; left: calc(50% - 40px); background: #555; padding: 5px 15px; font-size: 12px; border-radius: 5px; display: none; z-index: 120; border: none; color: white; }
       </style>
     </head>
     <body>
@@ -60,7 +67,6 @@ export default function App() {
       <div id="main-menu" class="menu-layer">
         <div class="menu-title">⚠️ STICK PARTY HUB ⚠️</div>
         <button class="menu-btn" onclick="showScreen('mode-menu')">Quick Play (4P)</button>
-        <button class="menu-btn" style="background:#444; box-shadow:none;">Options</button>
       </div>
 
       <div id="mode-menu" class="menu-layer" style="display:none;">
@@ -68,20 +74,15 @@ export default function App() {
         <div class="grid">
           <div class="card" onclick="startGame('Chaser')">
             <h3>⚡ CHASER</h3>
-            <p style="font-size:11px; color:#AAA;">Grab the glowing points first!</p>
-          </div>
-          <div class="card" style="opacity: 0.5; border-color: #555;">
-            <h3>⚽ SOCCER</h3>
-            <p style="font-size:11px; color:#666;">Coming Soon in next update!</p>
+            <p style="font-size:11px; color:#AAA;">Run with circular joystick controls!</p>
           </div>
         </div>
-        <button class="menu-btn" style="background:#FF3366; font-size:14px; padding:8px 20px; margin-top:20px;" onclick="showScreen('main-menu')">◀ Back</button>
       </div>
 
-      <div class="btn" id="p1-up">▲</div><div class="btn" id="p1-down">▼</div>
-      <div class="btn" id="p2-up">▲</div><div class="btn" id="p2-down">▼</div>
-      <div class="btn" id="p3-up">▲</div><div class="btn" id="p3-down">▼</div>
-      <div class="btn" id="p4-up">▲</div><div class="btn" id="p4-down">▼</div>
+      <div class="joystick-container" id="joy-p1"><div class="joystick-knob" id="knob-p1"></div></div>
+      <div class="joystick-container" id="joy-p2"><div class="joystick-knob" id="knob-p2"></div></div>
+      <div class="joystick-container" id="joy-p3"><div class="joystick-knob" id="knob-p3"></div></div>
+      <div class="joystick-container" id="joy-p4"><div class="joystick-knob" id="knob-p4"></div></div>
 
       <canvas id="gameCanvas"></canvas>
 
@@ -91,7 +92,7 @@ export default function App() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let gameState = "MENU"; // MENU, PLAYING
+        let gameState = "MENU"; 
         let players = [];
         let dots = [];
 
@@ -102,7 +103,7 @@ export default function App() {
 
         function toggleControllers(show) {
           const displayVal = show ? 'flex' : 'none';
-          document.querySelectorAll('.btn').forEach(b => b.style.display = displayVal);
+          document.querySelectorAll('.joystick-container').forEach(b => b.style.display = displayVal);
           document.getElementById('back-btn').style.display = displayVal;
         }
 
@@ -111,12 +112,11 @@ export default function App() {
           toggleControllers(true);
           gameState = "PLAYING";
           
-          // Reset custom character configurations
           players = [
-            { x: 50, y: canvas.height/2 - 40, color: '#FF3366', size: 20, vy: 0, score: 0, name: "P1" },
-            { x: canvas.width - 70, y: canvas.height/2 - 40, color: '#33CCFF', size: 20, vy: 0, score: 0, name: "P2" },
-            { x: 120, y: canvas.height/2 + 40, color: '#33FF66', size: 20, vy: 0, score: 0, name: "P3" },
-            { x: canvas.width - 140, y: canvas.height/2 + 40, color: '#FFCC33', size: 20, vy: 0, score: 0, name: "P4" }
+            { x: 100, y: canvas.height/2, color: '#FF3366', size: 20, vx: 0, vy: 0, score: 0, name: "P1" },
+            { x: canvas.width - 120, y: canvas.height/2, color: '#33CCFF', size: 20, vx: 0, vy: 0, score: 0, name: "P2" },
+            { x: 180, y: canvas.height/2, color: '#33FF66', size: 20, vx: 0, vy: 0, score: 0, name: "P3" },
+            { x: canvas.width - 200, y: canvas.height/2, color: '#FFCC33', size: 20, vx: 0, vy: 0, score: 0, name: "P4" }
           ];
 
           dots = [];
@@ -131,22 +131,58 @@ export default function App() {
           showScreen('main-menu');
         }
 
-        // Hook up touch events
-        function setMovement(id, pIdx, speed) {
-          const el = document.getElementById(id);
-          el.addEventListener('touchstart', (e) => { e.preventDefault(); if(players[pIdx]) players[pIdx].vy = speed; });
-          el.addEventListener('touchend', () => { if(players[pIdx]) players[pIdx].vy = 0; });
+        // Circular 2D Input tracking for joysticks
+        function bindJoystick(containerId, knobId, playerIdx) {
+          const container = document.getElementById(containerId);
+          const knob = document.getElementById(knobId);
+          const maxDist = 30; // boundaries of outer circle
+
+          function handleTouch(e) {
+            e.preventDefault();
+            if (gameState !== "PLAYING" || !players[playerIdx]) return;
+            
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            let deltaX = touch.clientX - centerX;
+            let deltaY = touch.clientY - centerY;
+            let distance = Math.hypot(deltaX, deltaY);
+
+            if (distance > maxDist) {
+              deltaX = (deltaX / distance) * maxDist;
+              deltaY = (deltaY / distance) * maxDist;
+            }
+
+            knob.style.transform = \`translate(\${deltaX}px, \${deltaY}px)\`;
+            
+            // Set speed velocity based on circle pull direction
+            players[playerIdx].vx = (deltaX / maxDist) * 5;
+            players[playerIdx].vy = (deltaY / maxDist) * 5;
+          }
+
+          container.addEventListener('touchstart', handleTouch);
+          container.addEventListener('touchmove', handleTouch);
+          container.addEventListener('touchend', () => {
+            knob.style.transform = 'translate(0px, 0px)';
+            if(players[playerIdx]) {
+              players[playerIdx].vx = 0;
+              players[playerIdx].vy = 0;
+            }
+          });
         }
-        setMovement('p1-up', 0, -6); setMovement('p1-down', 0, 6);
-        setMovement('p2-up', 1, -6); setMovement('p2-down', 1, 6);
-        setMovement('p3-up', 2, -6); setMovement('p3-down', 2, 6);
-        setMovement('p4-up', 3, -6); setMovement('p4-down', 3, 6);
+
+        // Activate the circular dynamic joysticks
+        bindJoystick('joy-p1', 'knob-p1', 0);
+        bindJoystick('joy-p2', 'knob-p2', 1);
+        bindJoystick('joy-p3', 'knob-p3', 2);
+        bindJoystick('joy-p4', 'knob-p4', 3);
 
         function gameLoop() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           if (gameState === "PLAYING") {
-            // Render targets
             dots.forEach(dot => {
               if(dot.active) {
                 ctx.beginPath();
@@ -156,20 +192,21 @@ export default function App() {
               }
             });
 
-            // Update stick fighters
             players.forEach((p, index) => {
+              // Move on both axes X and Y now
+              p.x += p.vx;
               p.y += p.vy;
+
+              if(p.x < 10) p.x = 10;
+              if(p.x > canvas.width - p.size - 10) p.x = canvas.width - p.size - 10;
               if(p.y < 10) p.y = 10;
               if(p.y > canvas.height - p.size - 10) p.y = canvas.height - p.size - 10;
 
-              // Draw stickman head & torso box
               ctx.fillStyle = p.color;
               ctx.fillRect(p.x, p.y, p.size, p.size);
               ctx.fillStyle = '#FFF';
-              ctx.font = '10px Arial';
               ctx.fillText(p.name, p.x + 4, p.y - 4);
 
-              // Check collisions
               dots.forEach(dot => {
                 if(dot.active && Math.hypot(p.x - dot.x, p.y - dot.y) < p.size + 8) {
                   dot.active = false;
@@ -182,13 +219,10 @@ export default function App() {
                 }
               });
 
-              // Show continuous arcade scoring panel
-              ctx.fillStyle = p.color;
-              ctx.font = 'bold 14px sans-serif';
+              ctx.style = p.color;
               ctx.fillText(p.name + ': ' + p.score, 30 + (index * 85), 30);
             });
           }
-
           requestAnimationFrame(gameLoop);
         }
         gameLoop();
