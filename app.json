@@ -6,6 +6,9 @@
     "orientation": "landscape",
     "userInterfaceStyle": "dark",
     "icon": "./app.png",
+    "splash": {
+      "backgroundColor": "#0D0D11"
+    },
     "android": {
       "package": "com.learninghub.abuarena",
       "adaptiveIcon": {
